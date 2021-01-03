@@ -1,13 +1,77 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@font-face{
+  font-family: bubble;
+  src: url("BLACK BUBBLE.ttf");
+}
+@font-face{
+  font-family: Netraly;
+  src: url("Netraly.otf");
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  font: 14px "Century Gothic", Futura, sans-serif;
+  color: black;
+  margin: 20px;
+  text-align: center;
+  background-color: #CCCCFF;
+}
+
+ol, ul {
+  padding-left: 30px;
+}
+
+h1, h4 {
+  font-family: Netraly;
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+input {
+	width: 75%;
+	height: 30px;
+	font: 40px;
+}
+
+button{
+ color:#ecd4d0;
+ background-color:#ecd4d0;
+ text-align:center;
+ transition: all 0.2s;
+}
+
+button:hover{
+ background-color:gray;
+  color: white;
+}
+
+.button {
+  font: "Century Gothic", Futura, sans-serif;
+  cursor: pointer;
+  border: 1px solid #1a202c;
+  padding: 10px;
+  min-width: 70px;
+  background: transparent;
+  transition: all 0.1s ease-in;
+  background: whitesmoke;
+}
+ 
+.button:hover {
+  background: gray;
+  color: #ffffff;
+}
+
+.square {
+  font: 14px "Century Gothic", Futura, sans-serif;
+  border-radius: 5px;
+  background: whitesmoke;
+  border: 2px gray;
+  border-style: outset;
+}
+
+.square:hover {
+  background: gray;
+  color: white;
 }
