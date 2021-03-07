@@ -1,370 +1,392 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './button.css';
+
 //import Button from 'react-bootstrap/Button'
 
+class WeekButtons extends React.Component {
 
-function Square(props) {
-  return (
-    <button className="square" 
-    style={{height: '30px', width : '100px'}}
-    size="lg" 
-    onClick={props.onClick}>
-    {props.value}
-    </button>
-    );
-  }
-
-
-  class Board extends React.Component {
-    renderSquare(i) {
-      return (
-      <Square
-      value={"Week " + i}
-      onClick={() => this.props.onClick(i)}
-      />
-      );
-    }
-
-    render() {
-      return (
-      <div>
-      <div className="board-row">
-      {this.renderSquare(1)}
-      {this.renderSquare(2)}
-      {this.renderSquare(3)}
-      {this.renderSquare(4)}
-      {this.renderSquare(5)}
-      {this.renderSquare(6)}
-      {this.renderSquare(7)}
-      {this.renderSquare(8)}
-      </div>
-
-      <div className="board-row">
-      {this.renderSquare(9)}
-      {this.renderSquare(10)}
-      {this.renderSquare(11)}
-      {this.renderSquare(12)}
-      {this.renderSquare(13)}
-      {this.renderSquare(14)}
-      {this.renderSquare(15)}
-      {this.renderSquare(16)}
-      </div>
-
-      <div className="board-row">
-      {this.renderSquare(17)}
-      {this.renderSquare(18)}
-      {this.renderSquare(19)}
-      {this.renderSquare(20)}
-      {this.renderSquare(21)}
-      {this.renderSquare(22)}
-      {this.renderSquare(23)}
-      {this.renderSquare(24)}
-      </div>
-
-      <div className="board-row">
-      {this.renderSquare(25)}
-      </div>
-      </div>
-      );
-    }
-  }
-
-  class Game extends React.Component {
-    constructor(props) {
-      super(props);
-      
-      this.handleSubmit = this.handleSubmit.bind(this);
-      this.handleEndOfWeek = this.handleEndOfWeek.bind(this);
-
-      this.state = {
-        history: [
-        {
-          squares: Array(9).fill(null)
-        }
-        ],
-        stepNumber: 0,
-        xIsNext: true,
-        stemString1: null,
-        stemString2: null,
-        stemString3: null,
-        stemString4: null,
-        weekText1: null,
-        weekText2: null,
-        weekText3: null,
-        weekText4: null,
-        weekNum: null,
-        id1: null,
-        id2: null,
-        id3: null,
-        id4: null
-      };
-    }
-
-    handleClick(i) {
-      setWeek(i);
-      let index = i*4;      
-      this.setState({
-        weekNum:i,
-        stemString1:getStem(index - 3),
-        stemString2:getStem(index - 2),
-        stemString3:getStem(index - 1),
-        stemString4:getStem(index),
-        id1: index - 3,
-        id2: index - 2,
-        id3: index - 1,
-        id4: index 
-      });
-    }
-
-    handleSubmit(event) {
-      let weekNum = getWeek();
-      event.preventDefault();
-      const data = new FormData(event.target);
-
-      let stemNumber = data.get('stem');
-      console.log(stemNumber);
-
-      postFinisher('http://localhost:3002/finishers', 
-      {"stem_number":stemNumber, "finisher":data.get('0')});
-      postFinisher('http://localhost:3002/finishers', 
-      {"stem_number":stemNumber, "finisher":data.get('1')});
-      postFinisher('http://localhost:3002/finishers', 
-      {"stem_number":stemNumber, "finisher":data.get('2')});
-      postFinisher('http://localhost:3002/finishers', 
-      {"stem_number":stemNumber, "finisher":data.get('3')});
-      postFinisher('http://localhost:3002/finishers', 
-      {"stem_number":stemNumber, "finisher":data.get('4')});
-
-    }
+  constructor(props) {
+    super(props);
+    this.state = {value: '',
+    stemString1: null,
+    stemString2: null,
+    stemString3: null,
+    stemString4: null,
+    stemString5: null
+  };   
+}
 
 
-    handleEndOfWeek(){
-      let weekNum = getWeek();
-      let index = weekNum*4;
-      fetch('http://localhost:3002/finishers')
+handleWeekButtonClick(val) {
+  let prompts = getPrompts1(val);
+  console.log(prompts[0]);
+  this.setState({
+    stemString1:getStem(0),
+    stemString2:getStem(1),
+    stemString3:getStem(2),
+    stemString4:getStem(3),
+    stemString5:getStem(4)
+  });
+}
+
+handleSubmit(event) {
+  event.preventDefault();
+  const data = new FormData(event.target);
+
+  let stemNumber = data.get('stem');
+  console.log(stemNumber);
+
+  postFinisher('http://localhost:3002/finishers', 
+    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('0')});
+  postFinisher('http://localhost:3002/finishers', 
+    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('1')});
+  postFinisher('http://localhost:3002/finishers', 
+    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('2')});
+  postFinisher('http://localhost:3002/finishers', 
+    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('3')});
+  postFinisher('http://localhost:3002/finishers', 
+    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('4')});
+
+}
+
+handleEndOfWeek(){
+   document.getElementById("finishers1Header").innerHTML = getStem(0) + ': ';
+   document.getElementById("finishers2Header").innerHTML = getStem(1) + ': ';
+   document.getElementById("finishers3Header").innerHTML = getStem(2) + ': ';
+   document.getElementById("finishers4Header").innerHTML = getStem(3) + ': ';
+   document.getElementById("finishers5Header").innerHTML = '';
+  
+
+    let id = document.getElementById("stem1Id").value;
+    document.getElementById("finishers1").innerHTML = '';
+    fetch("http://localhost:3002/finishers/stem_number/" + id)
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
-        let tempString1 = getStem(index - 3);
-        let tempString2 = getStem(index - 2);
-        let tempString3 = getStem(index - 1);
-        let tempString4 = getStem(index);
+      json.forEach(function(item){
+        console.log(item.finisher);
+        document.getElementById("finishers1").innerHTML += ', ' + item.finisher;
+      });
+    })
+    .catch((error) => {
+    console.error(error);
+  }); 
+
+    id = document.getElementById("stem2Id").value;
+    document.getElementById("finishers2").innerHTML = '';
+    fetch("http://localhost:3002/finishers/stem_number/" + id)
+      .then((response) => response.json())
+      .then((json) => {
+      json.forEach(function(item){
+        console.log(item.finisher);
+        document.getElementById("finishers2").innerHTML += ', ' + item.finisher;
+      });
+    })
+    .catch((error) => {
+    console.error(error);
+  }); 
 
 
+  id = document.getElementById("stem3Id").value;
+    document.getElementById("finishers3").innerHTML = '';
+    fetch("http://localhost:3002/finishers/stem_number/" + id)
+      .then((response) => response.json())
+      .then((json) => {
+      json.forEach(function(item){
+        console.log(item.finisher);
+        document.getElementById("finishers3").innerHTML += ', ' + item.finisher;
+      });
+    })
+    .catch((error) => {
+    console.error(error);
+  });     
+
+  id = document.getElementById("stem4Id").value;
+    document.getElementById("finishers4").innerHTML = '';
+    fetch("http://localhost:3002/finishers/stem_number/" + id)
+      .then((response) => response.json())
+      .then((json) => {
+      json.forEach(function(item){
+        console.log(item.finisher);
+        document.getElementById("finishers4").innerHTML += ', ' + item.finisher;
+      });
+    })
+    .catch((error) => {
+    console.error(error);
+  }); 
+
+  document.getElementById("finishers5").innerHTML = '';
+  if(getStem(5) != null){
+    document.getElementById("finishers5Header").innerHTML = getStem(4) + ': ';
+    id = document.getElementById("stem5Id").value;
+      fetch("http://localhost:3002/finishers/stem_number/" + id)
+        .then((response) => response.json())
+        .then((json) => {
         json.forEach(function(item){
-          switch(item.stem_number) {
-            case (index - 3):
-            tempString1 = tempString1 + ", " + item.finisher;
-            break;
-            case (index - 2):
-            tempString2 = tempString2 + ", " + item.finisher;
-            break;
-            case (index - 1):
-            tempString3 = tempString3 + ", " + item.finisher;
-            break;
-            case (index): 
-            tempString4 = tempString4 + ", " + item.finisher;
-            break;
-          }
-
-        })
-        this.setState({
-          weekText1:tempString1,
-          weekText2:tempString2,
-          weekText3:tempString3,
-          weekText4:tempString4
+          console.log(item.finisher);
+          document.getElementById("finishers5").innerHTML += ', ' + item.finisher;
         });
       })
       .catch((error) => {
-        console.error(error);
-      });    
-    }
-
-
-    render() {
-      let stem1 = this.state.stemString1;
-      let stem2 = this.state.stemString2;
-      let stem3 = this.state.stemString3;
-      let stem4 = this.state.stemString4;
-      let weekText1Var = this.state.weekText1;
-      let weekText2Var = this.state.weekText2;
-      let weekText3Var = this.state.weekText3;
-      let weekText4Var = this.state.weekText4;
-      let weekNum = this.state.weekNum;
-      let id1 = this.state.id1;
-      let id2 = this.state.id2;
-      let id3 = this.state.id3;
-      let id4 = this.state.id4;
-
-      return (
-      <div className="game">
-      <h1> Sentence Stem Completion</h1>
-      <h4> inspired by <a href='http://nathanielbranden.com/sentence-completion-i'> Nathaniel Branden </a> </h4>
-      <div className="game-board">
-      <Board
-      onClick={i => this.handleClick(i)}
-      />
-      </div>
-      <div className="game-info">
-      
-      <form onSubmit={this.handleSubmit} autocomplete="off">
-      <h3>{stem1}</h3>
-      <input type="hidden" name="stem" value={id1}/>
-      <input id="0" name="0"
-      type="text"
-      required/> <br/>
-      <input id="1" name="1"
-      type="text"
-      required/> <br/>
-      <input id="2" name="2"
-      type="text"
-      required/> <br/>
-      <input id="3" name="3"
-      type="text"
-      required/> <br/>
-      <input id="4" name="4"
-      type="text"
-      required/><br/>
-      <button className="square">Send data!</button>
-      </form>
-      <form onSubmit={this.handleSubmit} autocomplete="off">
-      <h3>{stem2}</h3>
-      <input type="hidden" name="stem" value={id2}/>
-      <input id="0" name="0"
-      type="text"
-      required/> <br/>
-      <input id="1" name="1"
-      type="text"
-      required/> <br/>
-      <input id="2" name="2"
-      type="text"
-      required/> <br/>
-      <input id="3" name="3"
-      type="text"
-      required/> <br/>
-      <input id="4" name="4"
-      type="text"
-      required/><br/>
-      <button className="square">Send data!</button>
-      </form>
-      <form onSubmit={this.handleSubmit} autocomplete="off">
-      <h3>{stem3}</h3>
-      <input type="hidden" name="stem" value={id3}/>
-      <input id="0" name="0"
-      type="text"
-      required/> <br/>
-      <input id="1" name="1"
-      type="text"
-      required/> <br/>
-      <input id="2" name="2"
-      type="text"
-      required/> <br/>
-      <input id="3" name="3"
-      type="text"
-      required/> <br/>
-      <input id="4" name="4"
-      type="text"
-      required/><br/>
-      <button className="square">Send data!</button>
-      </form>
-      <form onSubmit={this.handleSubmit} autocomplete="off">
-      <h3>{stem4}</h3>
-      <input type="hidden" name="stem" value={id4}/>
-      <input id="0" name="0"
-      type="text"
-      required/> <br/>
-      <input id="1" name="1"
-      type="text"
-      required/> <br/>
-      <input id="2" name="2"
-      type="text"
-      required/> <br/>
-      <input id="3" name="3"
-      type="text"
-      required/> <br/>
-      <input id="4" name="4"
-      type="text"
-      required/><br/>
-      <button className="square">Send data!</button>
-      </form>
-      </div>
-      <button className="square" onClick={() => this.handleEndOfWeek()}>End of the week</button>
-      <p> {weekText1Var}</p>
-      <p> {weekText2Var}</p>
-      <p> {weekText3Var}</p>
-      <p> {weekText4Var}</p>
-      <form onSubmit={this.handleSubmit} autocomplete="off">
-      <h3>If any of what I wrote this week is true, it might be helpful if I…</h3>
-      <input type="hidden" name="stem" value={stem3}/>
-      <input id="0" name="0"
-      type="text"
-      required/> <br/>
-      <input id="1" name="1"
-      type="text"
-      required/> <br/>
-      <input id="2" name="2"
-      type="text"
-      required/> <br/>
-      <input id="3" name="3"
-      type="text"
-      required/> <br/>
-      <input id="4" name="4"
-      type="text"
-      required/><br/>
-      <button className="square">Send data!</button>
-      </form>
-      </div>
-      );
-    }
+      console.error(error);
+    }); 
   }
 
+  
+}
+
+render() {
+
+  let stem1 = this.state.stemString1;
+  let stem2 = this.state.stemString2;
+  let stem3 = this.state.stemString3;
+  let stem4 = this.state.stemString4;
+  let stem5 = this.state.stemString5;
 
 
+  return ( 
+    <div>
+    <h1> Sentence Stem Completion</h1>
+    <h4> inspired by <a href='http://nathanielbranden.com/sentence-completion-i'> Nathaniel Branden </a> </h4>
 
-  // ========================================
+    <a onClick={() => this.handleWeekButtonClick(1)} class="btn red circular">Week 1</a>
+    <a onClick={() => this.handleWeekButtonClick(2)} class="btn circular">Week 2</a>
+    <a onClick={() => this.handleWeekButtonClick(3)} class="btn orange circular">Week 3</a>
+    <a onClick={() => this.handleWeekButtonClick(4)} class="btn light-orange circular">Week 4</a>
+    <a onClick={() => this.handleWeekButtonClick(5)} class="btn yellow-orange circular">Week 5</a>
+    <a onClick={() => this.handleWeekButtonClick(6)} class="btn yellow circular">Week 6</a>
+    <a onClick={() => this.handleWeekButtonClick(7)} class="btn yellow-green circular">Week 7</a>
+    <a onClick={() => this.handleWeekButtonClick(8)} class="btn green circular">Week 8</a>
+    <a onClick={() => this.handleWeekButtonClick(9)} class="btn dark-green circular">Week 9</a>
+    <a onClick={() => this.handleWeekButtonClick(10)} class="btn teal circular">Week 10</a>
+    <a onClick={() => this.handleWeekButtonClick(11)} class="btn light-blue circular">Week 11</a>
+    <a onClick={() => this.handleWeekButtonClick(12)} class="btn blue circular">Week 12</a>
+    <a onClick={() => this.handleWeekButtonClick(13)} class="btn sky circular">Week 13</a>
+    <a onclick="loadWeek(14)" class="btn dark-blue circular">Week 14</a>
+    <a onclick="loadWeek(15)" class="btn purple circular">Week 15</a>
+    <a onclick="loadWeek(16)" class="btn pink circular">Week 16</a>
+    <a onclick="loadWeek(17)" class="btn pink-purple circular">Week 17</a>
+    <a onclick="loadWeek(18)" class="btn wine circular">Week 18</a>
+    <a onclick="loadWeek(19)" class="btn deep-black circular">Week 19</a>
+    <a onclick="loadWeek(20)" class="btn black circular">Week 20</a>
+    <a onclick="loadWeek(21)" class="btn gray circular">Week 21</a>
+    <a onclick="loadWeek(22)" class="btn gray-brown circular">Week 22</a>
+    <a onclick="loadWeek(23)" class="btn brown circular">Week 23</a>
+    <a onclick="loadWeek(24)" class="btn tan circular">Week 24</a>
+    <a onclick="loadWeek(25)" class="btn whitesmoke circular">Week 25</a> 
+    <br/>
+    <br/>
+    <br/>
+    <form onSubmit={this.handleSubmit} autocomplete="off">
+    <h3 id="stem1">{stem1}</h3>
+    <input id="stem1Id"  type="hidden" name="stem"/>
 
-  ReactDOM.render(<Game />, document.getElementById("root"));
+    <input id="0" name="0"
+    type="text"
+    required/> <br/>
+    <input id="1" name="1"
+    type="text"
+    required/> <br/>
+    <input id="2" name="2"
+    type="text"
+    required/> <br/>
+    <input id="3" name="3"
+    type="text"
+    required/> <br/>
+    <input id="4" name="4"
+    type="text"
+    required/><br/>
+    <button className="square">Send data!</button>
+    </form>
 
-  let fileContents = new Array();
-  let WEEKNUM = 0;
+    <form onSubmit={this.handleSubmit} autocomplete="off">
+    <h3 id="stem2">{stem2}</h3>
+    <input id="stem2Id" type="hidden" name="stem"/>
+    <input id="0" name="0"
+    type="text"
+    required/> <br/>
+    <input id="1" name="1"
+    type="text"
+    required/> <br/>
+    <input id="2" name="2"
+    type="text"
+    required/> <br/>
+    <input id="3" name="3"
+    type="text"
+    required/> <br/>
+    <input id="4" name="4"
+    type="text"
+    required/><br/>
+    <button className="square">Send data!</button>
+    </form>
 
-  function setWeek(week){
-    WEEKNUM = week;
+    <form onSubmit={this.handleSubmit} autocomplete="off">
+    <h3 id="stem3">{stem3}</h3>
+    <input id="stem3Id" type="hidden" name="stem"/>
+    <input id="0" name="0"
+    type="text"
+    required/> <br/>
+    <input id="1" name="1"
+    type="text"
+    required/> <br/>
+    <input id="2" name="2"
+    type="text"
+    required/> <br/>
+    <input id="3" name="3"
+    type="text"
+    required/> <br/>
+    <input id="4" name="4"
+    type="text"
+    required/><br/>
+    <button className="square">Send data!</button>
+    </form>
+
+    <form onSubmit={this.handleSubmit} autocomplete="off">
+    <h3 id="stem4">{stem4}</h3>
+    <input id="stem4Id" type="hidden" name="stem"/>
+    <input id="0" name="0"
+    type="text"
+    required/> <br/>
+    <input id="1" name="1"
+    type="text"
+    required/> <br/>
+    <input id="2" name="2"
+    type="text"
+    required/> <br/>
+    <input id="3" name="3"
+    type="text"
+    required/> <br/>
+    <input id="4" name="4"
+    type="text"
+    required/><br/>
+    <button className="square">Send data!</button>
+    </form>
+
+    <div id="lastForm" style={{display: "none"}}>
+    <form onSubmit={this.handleSubmit} autocomplete="off">
+    <h3 id="stem5">{stem5}</h3>
+    <input id="stem5Id" type="hidden" name="stem"/>
+    <input id="0" name="0"
+    type="text"
+    required/> <br/>
+    <input id="1" name="1"
+    type="text"
+    required/> <br/>
+    <input id="2" name="2"
+    type="text"
+    required/> <br/>
+    <input id="3" name="3"
+    type="text"
+    required/> <br/>
+    <input id="4" name="4"
+    type="text"
+    required/><br/>
+    <button className="square">Send data!</button>
+    </form>
+    </div>
+
+    <button className="square" onClick={() => this.handleEndOfWeek()}>End of the week</button>
+    <h3 id="finishers1Header"> </h3>
+    <p id="finishers1"> </p>
+    <h3 id="finishers2Header"> </h3>
+    <p id="finishers2"> </p>
+    <h3 id="finishers3Header"> </h3>
+    <p id="finishers3"> </p>
+    <h3 id="finishers4Header"> </h3>
+    <p id="finishers4"> </p>
+    <h3 id="finishers5Header"> </h3>
+    <p id="finishers5"> </p>
+
+    <form onSubmit={this.handleSubmit} autocomplete="off">
+    <h3>If any of what I wrote this week is true, it might be helpful if I…</h3>
+    <input type="hidden" name="stem" value={stem3}/>
+    <input id="0" name="0"
+    type="text"
+    required/> <br/>
+    <input id="1" name="1"
+    type="text"
+    required/> <br/>
+    <input id="2" name="2"
+    type="text"
+    required/> <br/>
+    <input id="3" name="3"
+    type="text"
+    required/> <br/>
+    <input id="4" name="4"
+    type="text"
+    required/><br/>
+    <button className="square">Send data!</button>
+    </form>
+    </div>
+    );    
   }
+}
 
-  function getWeek(){
-    return WEEKNUM;
+//=================
+
+ReactDOM.render(<WeekButtons />, document.getElementById("root"));
+
+let finisher_stem_array = [];
+let finisher_id_array = [];
+
+function handleErrors(response) {
+  if (!response.ok) {
+    alert("error");
+    throw Error(response.statusText);
   }
+  return response;
+}
 
+async function getPrompts1(week_id){
+   finisher_id_array = [];
+   finisher_stem_array = [];
+  const Http = new XMLHttpRequest();
+  const url='http://localhost:3002/finishers/prompt/' + week_id;
+  Http.open("GET", url);
+  Http.send();
 
-  function getStem(i){
-    let stemMap = new Map([
-      [1, 'If I bring more awareness to my life today…'], 
-      [2, 'If I take more responsibility for my choices and actions today…'],
-      [3, 'If pay more attention to how I deal with people today…'],
-      [4, 'If I boost my energy level by 5 percent today…'],
-      [5, 'If I bring 5 percent more awareness to my important relationships…'],
-      [6, 'If I bring 5 percent more awareness to my insecurities…'],
-      [7, 'If I bring 5 percent more awareness to my deepest needs and wants…'],
-      [8, 'If I bring 5 percent more awareness to my emotions…'],
-      [9, 'If I treat listening as a creative act…'],
-      [10, 'If I notice how people are affected by the quality of my listening…'],
-      [11, 'If I bring more awareness to my dealings with people today…'],
-      [12, 'If I commit to dealing with people fairly and benevolently…']
-      ]);
-    return stemMap.get(i);
+  Http.onreadystatechange = (e) => {
+    if (Http.readyState == 4 && Http.status == 200){
+      console.log(Http.responseText);
+      let temp = JSON.parse(Http.responseText);
+
+      document.getElementById("stem1").innerHTML = temp[0].prompt;
+      document.getElementById("stem1Id").value = temp[0].id;
+
+      document.getElementById("stem2").innerHTML = temp[1].prompt;
+      document.getElementById("stem2Id").value = temp[1].id;
+
+      document.getElementById("stem3").innerHTML = temp[2].prompt;
+      document.getElementById("stem3Id").value = temp[2].id;
+
+      document.getElementById("stem4").innerHTML = temp[3].prompt;
+      document.getElementById("stem4Id").value = temp[3].id;
+
+      if(temp[4] != null){
+        document.getElementById("lastForm").style.display = "inline";
+        finisher_stem_array = [temp[0].prompt, temp[1].prompt, 
+          temp[2].prompt, temp[3].prompt, temp[4].prompt];
+        finisher_id_array = [temp[0].id, temp[1].id, 
+          temp[2].id, temp[3].id, temp[4].id];
+        document.getElementById("stem5").innerHTML = temp[4].prompt;
+        document.getElementById("stem5Id").value = temp[4].id;
+
+      }else{
+        document.getElementById("lastForm").style.display = "none";
+        finisher_stem_array = [temp[0].prompt, temp[1].prompt, 
+          temp[2].prompt, temp[3].prompt];
+        finisher_id_array = [temp[0].id, temp[1].id, 
+          temp[2].id, temp[3].id];
+      }
+
+      return temp;
+    } 
   }
+}
 
-  function handleErrors(response) {
-    if (!response.ok) {
-        alert("error");
-        throw Error(response.statusText);
-    }
-    return response;
-  }
 
-  async function postFinisher(url = '', data = {}) {
+async function postFinisher(url = '', data = {}) {
     // Default options are marked with *
     fetch('http://localhost:3002/finishers', {
     method: 'POST', // or 'PUT'
@@ -380,9 +402,22 @@ function Square(props) {
     })
     .catch((error) => {
       console.error('Error:', error);
+      alert("Error: " + error);
     });
-  
-}
+
+  }
+
+  function getStem(num){
+    return finisher_stem_array[num];
+  }
+
+   function getId(num){
+    return finisher_id_array[num];
+  }
+
+
+
+
 
 
 

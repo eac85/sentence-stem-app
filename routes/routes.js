@@ -3,6 +3,10 @@ const pool = require('../data/config');
 
 // Route the app
 const router = app => {
+    /**********************/
+    /* ---- GETTERS ----- */
+    /**********************/
+
     // Display welcome message on the root
     app.get('/', (request, response) => {
         response.send({
@@ -10,11 +14,20 @@ const router = app => {
         });
     });
 
-     // Display all users
+    // Get all finishers
     app.get('/finishers', (request, response) => {
         pool.query('select * from finishers', (error, result) => {
             if (error) throw error;
 
+            response.send(result);
+        });
+    });
+
+    // Get prompt by week_id
+    app.get('/finishers/prompt/:week_id', (request, response) => {
+        const week = request.params.week_id;
+        pool.query('SELECT * FROM sentence_prompts WHERE week_id = ?', week, (error, result) => {
+            if (error) throw error;
             response.send(result);
         });
     });
@@ -27,15 +40,6 @@ const router = app => {
         });
     });
 
-    // Display all users
-    app.get('/finishers/stem_id/:id', (request, response) => {
-        const id = request.params.id;
-        pool.query('SELECT * FROM stem_id WHERE id = ?', id, (error, result) => {
-            if (error) throw error;
-            response.send(result);
-        });
-    });
-    
 
     // Add a new user
     app.post('/finishers', (request, response) => {
