@@ -7,7 +7,7 @@
 <body>
 
 <h1> Sentence Stem Completion</h1>
-<h4> inspired by <a href='http://nathanielbranden.com/sentence-completion-i'> Nathaniel Branden </a> </h4>
+<h4> inspired by <a href='http://nathanielbranden.com/sentence-completion-i'> Nathaniel Branden! </a> </h4>
 <!-- https://codepen.io/dlekovic/pen/eDlkC -->
 <a onclick="loadWeek(1)" class="btn red circular">Week 1</a>
 <a onclick="loadWeek(2)" class="btn circular">Week 2</a>
@@ -20,7 +20,7 @@
 <a onclick="loadWeek(9)" class="btn dark-green circular">Week 9</a>
 <a onclick="loadWeek(10)" class="btn teal circular">Week 10</a>
 <a onclick="loadWeek(11)" class="btn light-blue circular">Week 11</a>
-<a onclick="loadWeek(12)" class="btn blue circular">Week 12</a>
+<a onclick="loadßWeek(12)" class="btn blue circular">Week 12</a>
 <a onclick="loadWeek(13)" class="btn sky circular">Week 13</a>
 <a onclick="loadWeek(14)" class="btn dark-blue circular">Week 14</a>
 <a onclick="loadWeek(15)" class="btn purple circular">Week 15</a>
@@ -60,6 +60,7 @@
 <script type="text/javascript">
 	function loadWeek(weekNum){
 		getPrompts('http://localhost:3002/finishers/prompt/:week_id', weekNum);
+    console.log("smelly");
 	}
 
 	function handleErrors(response) {

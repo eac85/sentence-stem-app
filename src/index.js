@@ -2,8 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import './button.css';
+import {fetchData, postData} from './AWSfunctions';
+import * as AWS from 'aws-sdk'
+import {ConfigurationOptions} from 'aws-sdk'
 
-//import Button from 'react-bootstrap/Button'
+
 
 class WeekButtons extends React.Component {
 
@@ -20,42 +23,62 @@ class WeekButtons extends React.Component {
 
 
 handleWeekButtonClick(val) {
-  let prompts = getPrompts1(val);
-  console.log(prompts[0]);
+  //let prompts = getPrompts1(val);
+  console.log(val);
+  getWeeklyPrompts(val);
+  /*console.log(prompts[0]);
   this.setState({
     stemString1:getStem(0),
     stemString2:getStem(1),
     stemString3:getStem(2),
     stemString4:getStem(3),
     stemString5:getStem(4)
-  });
+  });*/
 }
 
 handleSubmit(event) {
   event.preventDefault();
   const data = new FormData(event.target);
 
-  let stemNumber = data.get('stem');
-  console.log(stemNumber);
+  let finisher_id = data.get('stem');
+  let finisher = data.get('0');
+  console.log(finisher_id);
 
-  postFinisher('http://localhost:3002/finishers', 
-    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('0')});
-  postFinisher('http://localhost:3002/finishers', 
-    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('1')});
-  postFinisher('http://localhost:3002/finishers', 
-    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('2')});
-  postFinisher('http://localhost:3002/finishers', 
-    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('3')});
-  postFinisher('http://localhost:3002/finishers', 
-    {"stem_number":stemNumber, user_id:"0", "finisher":data.get('4')});
+  var dataObject1 = {
+      "finisher_id":  finisher_id,
+      "finisher":  data.get('0'),
+      "user_id": "0"
+  }
+  postData(dataObject1);
 
+
+  var dataObject2 = {
+      "finisher_id":  finisher_id,
+      "finisher":  data.get('1'),
+      "user_id": "0"
+  }
+  postData(dataObject2);
+
+  var dataObject3 = {
+      "finisher_id":  finisher_id,
+      "finisher":  data.get('2'),
+      "user_id": "0"
+  }
+  postData(dataObject3);
+
+  var dataObject4 = {
+      "finisher_id":  finisher_id,
+      "finisher":  data.get('3'),
+      "user_id": "0"
+  }
+  postData(dataObject4);
 }
 
 handleEndOfWeek(){
-   document.getElementById("finishers1Header").innerHTML = getStem(0) + ': ';
-   document.getElementById("finishers2Header").innerHTML = getStem(1) + ': ';
-   document.getElementById("finishers3Header").innerHTML = getStem(2) + ': ';
-   document.getElementById("finishers4Header").innerHTML = getStem(3) + ': ';
+   document.getElementById("finishers1Header").innerHTML = document.getElementById("stem1").innerHTML  + ': ';
+   document.getElementById("finishers2Header").innerHTML = document.getElementById("stem2").innerHTML  + ': ';
+   document.getElementById("finishers3Header").innerHTML = document.getElementById("stem3").innerHTML  + ': ';
+   document.getElementById("finishers4Header").innerHTML = document.getElementById("stem4").innerHTML  + ': ';
    document.getElementById("finishers5Header").innerHTML = '';
   
 
@@ -135,7 +158,7 @@ handleEndOfWeek(){
 
   
 }
-
+/*<button onClick={() => fetchDataFormDynamoDb()}> Fetch </button>*/
 render() {
 
   let stem1 = this.state.stemString1;
@@ -150,31 +173,33 @@ render() {
     <h1> Sentence Stem Completion</h1>
     <h4> inspired by <a href='http://nathanielbranden.com/sentence-completion-i'> Nathaniel Branden </a> </h4>
 
-    <a onClick={() => this.handleWeekButtonClick(1)} class="btn red circular">Week 1</a>
-    <a onClick={() => this.handleWeekButtonClick(2)} class="btn circular">Week 2</a>
-    <a onClick={() => this.handleWeekButtonClick(3)} class="btn orange circular">Week 3</a>
-    <a onClick={() => this.handleWeekButtonClick(4)} class="btn light-orange circular">Week 4</a>
-    <a onClick={() => this.handleWeekButtonClick(5)} class="btn yellow-orange circular">Week 5</a>
-    <a onClick={() => this.handleWeekButtonClick(6)} class="btn yellow circular">Week 6</a>
-    <a onClick={() => this.handleWeekButtonClick(7)} class="btn yellow-green circular">Week 7</a>
-    <a onClick={() => this.handleWeekButtonClick(8)} class="btn green circular">Week 8</a>
-    <a onClick={() => this.handleWeekButtonClick(9)} class="btn dark-green circular">Week 9</a>
-    <a onClick={() => this.handleWeekButtonClick(10)} class="btn teal circular">Week 10</a>
-    <a onClick={() => this.handleWeekButtonClick(11)} class="btn light-blue circular">Week 11</a>
-    <a onClick={() => this.handleWeekButtonClick(12)} class="btn blue circular">Week 12</a>
-    <a onClick={() => this.handleWeekButtonClick(13)} class="btn sky circular">Week 13</a>
-    <a onclick="loadWeek(14)" class="btn dark-blue circular">Week 14</a>
-    <a onclick="loadWeek(15)" class="btn purple circular">Week 15</a>
-    <a onclick="loadWeek(16)" class="btn pink circular">Week 16</a>
-    <a onclick="loadWeek(17)" class="btn pink-purple circular">Week 17</a>
-    <a onclick="loadWeek(18)" class="btn wine circular">Week 18</a>
-    <a onclick="loadWeek(19)" class="btn deep-black circular">Week 19</a>
-    <a onclick="loadWeek(20)" class="btn black circular">Week 20</a>
-    <a onclick="loadWeek(21)" class="btn gray circular">Week 21</a>
-    <a onclick="loadWeek(22)" class="btn gray-brown circular">Week 22</a>
-    <a onclick="loadWeek(23)" class="btn brown circular">Week 23</a>
-    <a onclick="loadWeek(24)" class="btn tan circular">Week 24</a>
-    <a onclick="loadWeek(25)" class="btn whitesmoke circular">Week 25</a> 
+    
+
+    <a onClick={() => this.handleWeekButtonClick("1")} class="btn red circular">Week 1</a>
+    <a onClick={() => this.handleWeekButtonClick("2")} class="btn circular">Week 2</a>
+    <a onClick={() => this.handleWeekButtonClick("3")} class="btn orange circular">Week 3</a>
+    <a onClick={() => this.handleWeekButtonClick("4")} class="btn light-orange circular">Week 4</a>
+    <a onClick={() => this.handleWeekButtonClick("5")} class="btn yellow-orange circular">Week 5</a>
+    <a onClick={() => this.handleWeekButtonClick("6")} class="btn yellow circular">Week 6</a>
+    <a onClick={() => this.handleWeekButtonClick("7")} class="btn yellow-green circular">Week 7</a>
+    <a onClick={() => this.handleWeekButtonClick("8")} class="btn green circular">Week 8</a>
+    <a onClick={() => this.handleWeekButtonClick("9")} class="btn dark-green circular">Week 9</a>
+    <a onClick={() => this.handleWeekButtonClick("10")} class="btn teal circular">Week 10</a>
+    <a onClick={() => this.handleWeekButtonClick("11")} class="btn light-blue circular">Week 11</a>
+    <a onClick={() => this.handleWeekButtonClick("12")} class="btn blue circular">Week 12</a>
+    <a onClick={() => this.handleWeekButtonClick("13")} class="btn sky circular">Week 13</a>
+    <a onClick={() => this.handleWeekButtonClick("14")}class="btn dark-blue circular">Week 14</a>
+    <a onClick={() => this.handleWeekButtonClick("15")} class="btn purple circular">Week 15</a>
+    <a onClick={() => this.handleWeekButtonClick("16")} class="btn pink circular">Week 16</a>
+    <a onClick={() => this.handleWeekButtonClick("17")} class="btn pink-purple circular">Week 17</a>
+    <a onClick={() => this.handleWeekButtonClick("18")}class="btn wine circular">Week 18</a>
+    <a onClick={() => this.handleWeekButtonClick("19")} class="btn deep-black circular">Week 19</a>
+    <a onClick={() => this.handleWeekButtonClick("20")} class="btn black circular">Week 20</a>
+    <a onClick={() => this.handleWeekButtonClick("21")} class="btn gray circular">Week 21</a>
+    <a onClick={() => this.handleWeekButtonClick("22")} class="btn gray-brown circular">Week 22</a>
+    <a onClick={() => this.handleWeekButtonClick("23")} class="btn brown circular">Week 23</a>
+    <a onClick={() => this.handleWeekButtonClick("24")} class="btn tan circular">Week 24</a>
+    <a onClick={() => this.handleWeekButtonClick("25")} class="btn whitesmoke circular">Week 25</a> 
     <br/>
     <br/>
     <br/>
@@ -282,7 +307,7 @@ render() {
     <input id="4" name="4"
     type="text"
     required/><br/>
-    <button className="square">Send data!</button>
+    <button id="" className="square">Send data!</button>
     </form>
     </div>
 
@@ -415,6 +440,32 @@ async function postFinisher(url = '', data = {}) {
     return finisher_id_array[num];
   }
 
+  async function getWeeklyPrompts(weekNum) {
+    console.log("getWeeklyPrompts: " + weekNum);
+    var result = await fetchData(weekNum);
+    console.log(result);
+
+    document.getElementById("stem1").innerHTML = result[0].prompt;
+    document.getElementById("stem1Id").value = result[0].Id;
+
+    document.getElementById("stem2").innerHTML = result[1].prompt;
+    document.getElementById("stem2Id").value = result[1].Id;
+
+    document.getElementById("stem3").innerHTML = result[2].prompt;
+    document.getElementById("stem3Id").value = result[2].Id;
+
+    document.getElementById("stem4").innerHTML = result[3].prompt;
+    document.getElementById("stem4Id").value = result[3].Id;
+
+    if(result[4] != null){
+        document.getElementById("lastForm").style.display = "inline";
+        document.getElementById("stem5").innerHTML = result[4].prompt;
+        document.getElementById("stem5Id").value = result[4].Id;
+      }
+      else  {
+        document.getElementById("lastForm").style.display = "none";
+      }
+  }
 
 
 
