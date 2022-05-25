@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import './button.css';
-import {fetchData, postData} from './AWSfunctions';
+import {fetchData, postData, fetchFinishers} from './AWSfunctions';
 import * as AWS from 'aws-sdk'
 import {ConfigurationOptions} from 'aws-sdk'
 
@@ -23,17 +23,8 @@ class WeekButtons extends React.Component {
 
 
 handleWeekButtonClick(val) {
-  //let prompts = getPrompts1(val);
   console.log(val);
   getWeeklyPrompts(val);
-  /*console.log(prompts[0]);
-  this.setState({
-    stemString1:getStem(0),
-    stemString2:getStem(1),
-    stemString3:getStem(2),
-    stemString4:getStem(3),
-    stemString5:getStem(4)
-  });*/
 }
 
 handleSubmit(event) {
@@ -45,120 +36,100 @@ handleSubmit(event) {
   console.log(finisher_id);
 
   var dataObject1 = {
-      "finisher_id":  finisher_id,
-      "finisher":  data.get('0'),
-      "user_id": "0"
+    "finisher_id":  finisher_id,
+    "finisher":  data.get('0'),
+    "user_id": "0"
   }
   postData(dataObject1);
 
 
   var dataObject2 = {
-      "finisher_id":  finisher_id,
-      "finisher":  data.get('1'),
-      "user_id": "0"
+    "finisher_id":  finisher_id,
+    "finisher":  data.get('1'),
+    "user_id": "0"
   }
   postData(dataObject2);
 
   var dataObject3 = {
-      "finisher_id":  finisher_id,
-      "finisher":  data.get('2'),
-      "user_id": "0"
+    "finisher_id":  finisher_id,
+    "finisher":  data.get('2'),
+    "user_id": "0"
   }
   postData(dataObject3);
 
   var dataObject4 = {
-      "finisher_id":  finisher_id,
-      "finisher":  data.get('3'),
-      "user_id": "0"
+    "finisher_id":  finisher_id,
+    "finisher":  data.get('3'),
+    "user_id": "0"
   }
   postData(dataObject4);
 }
 
-handleEndOfWeek(){
-   document.getElementById("finishers1Header").innerHTML = document.getElementById("stem1").innerHTML  + ': ';
-   document.getElementById("finishers2Header").innerHTML = document.getElementById("stem2").innerHTML  + ': ';
-   document.getElementById("finishers3Header").innerHTML = document.getElementById("stem3").innerHTML  + ': ';
-   document.getElementById("finishers4Header").innerHTML = document.getElementById("stem4").innerHTML  + ': ';
-   document.getElementById("finishers5Header").innerHTML = '';
-  
+async handleEndOfWeek(){
+ let dataObject = null;
+ let result = null;
+ let i = null;
 
-    let id = document.getElementById("stem1Id").value;
-    document.getElementById("finishers1").innerHTML = '';
-    fetch("http://localhost:3002/finishers/stem_number/" + id)
-      .then((response) => response.json())
-      .then((json) => {
-      json.forEach(function(item){
-        console.log(item.finisher);
-        document.getElementById("finishers1").innerHTML += ', ' + item.finisher;
-      });
-    })
-    .catch((error) => {
-    console.error(error);
-  }); 
-
-    id = document.getElementById("stem2Id").value;
-    document.getElementById("finishers2").innerHTML = '';
-    fetch("http://localhost:3002/finishers/stem_number/" + id)
-      .then((response) => response.json())
-      .then((json) => {
-      json.forEach(function(item){
-        console.log(item.finisher);
-        document.getElementById("finishers2").innerHTML += ', ' + item.finisher;
-      });
-    })
-    .catch((error) => {
-    console.error(error);
-  }); 
-
-
-  id = document.getElementById("stem3Id").value;
-    document.getElementById("finishers3").innerHTML = '';
-    fetch("http://localhost:3002/finishers/stem_number/" + id)
-      .then((response) => response.json())
-      .then((json) => {
-      json.forEach(function(item){
-        console.log(item.finisher);
-        document.getElementById("finishers3").innerHTML += ', ' + item.finisher;
-      });
-    })
-    .catch((error) => {
-    console.error(error);
-  });     
-
-  id = document.getElementById("stem4Id").value;
-    document.getElementById("finishers4").innerHTML = '';
-    fetch("http://localhost:3002/finishers/stem_number/" + id)
-      .then((response) => response.json())
-      .then((json) => {
-      json.forEach(function(item){
-        console.log(item.finisher);
-        document.getElementById("finishers4").innerHTML += ', ' + item.finisher;
-      });
-    })
-    .catch((error) => {
-    console.error(error);
-  }); 
-
-  document.getElementById("finishers5").innerHTML = '';
-  if(getStem(5) != null){
-    document.getElementById("finishers5Header").innerHTML = getStem(4) + ': ';
-    id = document.getElementById("stem5Id").value;
-      fetch("http://localhost:3002/finishers/stem_number/" + id)
-        .then((response) => response.json())
-        .then((json) => {
-        json.forEach(function(item){
-          console.log(item.finisher);
-          document.getElementById("finishers5").innerHTML += ', ' + item.finisher;
-        });
-      })
-      .catch((error) => {
-      console.error(error);
-    }); 
-  }
-
-  
+ dataObject = setEOWDataObject(document.getElementById("stem1Id").value, 0);
+ result = await fetchFinishers(dataObject);
+ if (result != null){
+ document.getElementById("finishers1Header").innerHTML = document.getElementById("stem1").innerHTML  + ': ';
+ document.getElementById("finishers1").innerHTML = result[0].finisher;
+ for (i = 1; i < result.length; i++) {
+  document.getElementById("finishers1").innerHTML += ', ' + result[i].finisher;
+  console.log(result[i].finisher);
 }
-/*<button onClick={() => fetchDataFormDynamoDb()}> Fetch </button>*/
+}
+
+dataObject = setEOWDataObject(document.getElementById("stem2Id").value, 0);
+result = await fetchFinishers(dataObject);
+if (result != null){
+document.getElementById("finishers2Header").innerHTML = document.getElementById("stem2").innerHTML  + ': ';
+document.getElementById("finishers2").innerHTML = result[0].finisher;
+for (i = 1; i < result.length; i++) {
+  document.getElementById("finishers2").innerHTML += ', ' + result[i].finisher;
+  console.log(result[i].finisher);
+}
+}
+result = null;
+dataObject = setEOWDataObject(document.getElementById("stem3Id").value, 0);
+result = await fetchFinishers(dataObject);
+if (result != null){
+ document.getElementById("finishers3Header").innerHTML = document.getElementById("stem3").innerHTML  + ': ';
+ document.getElementById("finishers3").innerHTML = result[0].finisher;
+ for (i = 1; i < result.length; i++) {
+  document.getElementById("finishers3").innerHTML += ', ' + result[i].finisher;
+  console.log(result[i].finisher);
+}
+}
+
+dataObject = setEOWDataObject(document.getElementById("stem4Id").value, 0);
+result = await fetchFinishers(dataObject);
+if (result != null){
+ document.getElementById("finishers4Header").innerHTML = document.getElementById("stem4").innerHTML  + ': ';
+ document.getElementById("finishers4").innerHTML = result[0].finisher;
+ for (i = 1; i < result.length; i++) {
+  document.getElementById("finishers4").innerHTML += ', ' + result[i].finisher;
+  console.log(result[i].finisher);
+}
+}
+
+dataObject = setEOWDataObject(document.getElementById("stem5Id").value, 0);
+result = await fetchFinishers(dataObject);
+if (result != null){
+ document.getElementById("finishers5Header").innerHTML = document.getElementById("stem5").innerHTML  + ': ';
+ document.getElementById("finishers5").innerHTML = result[0].finisher;
+ for (i = 1; i < result.length; i++) {
+  document.getElementById("finishers5").innerHTML += ', ' + result[i].finisher;
+  console.log(result[i].finisher);
+}
+}
+
+}
+
+
+
+
 render() {
 
   let stem1 = this.state.stemString1;
@@ -181,25 +152,6 @@ render() {
     <a onClick={() => this.handleWeekButtonClick("4")} class="btn light-orange circular">Week 4</a>
     <a onClick={() => this.handleWeekButtonClick("5")} class="btn yellow-orange circular">Week 5</a>
     <a onClick={() => this.handleWeekButtonClick("6")} class="btn yellow circular">Week 6</a>
-    <a onClick={() => this.handleWeekButtonClick("7")} class="btn yellow-green circular">Week 7</a>
-    <a onClick={() => this.handleWeekButtonClick("8")} class="btn green circular">Week 8</a>
-    <a onClick={() => this.handleWeekButtonClick("9")} class="btn dark-green circular">Week 9</a>
-    <a onClick={() => this.handleWeekButtonClick("10")} class="btn teal circular">Week 10</a>
-    <a onClick={() => this.handleWeekButtonClick("11")} class="btn light-blue circular">Week 11</a>
-    <a onClick={() => this.handleWeekButtonClick("12")} class="btn blue circular">Week 12</a>
-    <a onClick={() => this.handleWeekButtonClick("13")} class="btn sky circular">Week 13</a>
-    <a onClick={() => this.handleWeekButtonClick("14")}class="btn dark-blue circular">Week 14</a>
-    <a onClick={() => this.handleWeekButtonClick("15")} class="btn purple circular">Week 15</a>
-    <a onClick={() => this.handleWeekButtonClick("16")} class="btn pink circular">Week 16</a>
-    <a onClick={() => this.handleWeekButtonClick("17")} class="btn pink-purple circular">Week 17</a>
-    <a onClick={() => this.handleWeekButtonClick("18")}class="btn wine circular">Week 18</a>
-    <a onClick={() => this.handleWeekButtonClick("19")} class="btn deep-black circular">Week 19</a>
-    <a onClick={() => this.handleWeekButtonClick("20")} class="btn black circular">Week 20</a>
-    <a onClick={() => this.handleWeekButtonClick("21")} class="btn gray circular">Week 21</a>
-    <a onClick={() => this.handleWeekButtonClick("22")} class="btn gray-brown circular">Week 22</a>
-    <a onClick={() => this.handleWeekButtonClick("23")} class="btn brown circular">Week 23</a>
-    <a onClick={() => this.handleWeekButtonClick("24")} class="btn tan circular">Week 24</a>
-    <a onClick={() => this.handleWeekButtonClick("25")} class="btn whitesmoke circular">Week 25</a> 
     <br/>
     <br/>
     <br/>
@@ -323,7 +275,7 @@ render() {
     <h3 id="finishers5Header"> </h3>
     <p id="finishers5"> </p>
 
-    <form onSubmit={this.handleSubmit} autocomplete="off">
+    <form style={{display: "none"}} onSubmit={this.handleSubmit} autocomplete="off">
     <h3>If any of what I wrote this week is true, it might be helpful if I…</h3>
     <input type="hidden" name="stem" value={stem3}/>
     <input id="0" name="0"
@@ -364,50 +316,50 @@ function handleErrors(response) {
 }
 
 async function getPrompts1(week_id){
-   finisher_id_array = [];
-   finisher_stem_array = [];
-  const Http = new XMLHttpRequest();
-  const url='http://localhost:3002/finishers/prompt/' + week_id;
-  Http.open("GET", url);
-  Http.send();
+ finisher_id_array = [];
+ finisher_stem_array = [];
+ const Http = new XMLHttpRequest();
+ const url='http://localhost:3002/finishers/prompt/' + week_id;
+ Http.open("GET", url);
+ Http.send();
 
-  Http.onreadystatechange = (e) => {
-    if (Http.readyState == 4 && Http.status == 200){
-      console.log(Http.responseText);
-      let temp = JSON.parse(Http.responseText);
+ Http.onreadystatechange = (e) => {
+  if (Http.readyState == 4 && Http.status == 200){
+    console.log(Http.responseText);
+    let temp = JSON.parse(Http.responseText);
 
-      document.getElementById("stem1").innerHTML = temp[0].prompt;
-      document.getElementById("stem1Id").value = temp[0].id;
+    document.getElementById("stem1").innerHTML = temp[0].prompt;
+    document.getElementById("stem1Id").value = temp[0].id;
 
-      document.getElementById("stem2").innerHTML = temp[1].prompt;
-      document.getElementById("stem2Id").value = temp[1].id;
+    document.getElementById("stem2").innerHTML = temp[1].prompt;
+    document.getElementById("stem2Id").value = temp[1].id;
 
-      document.getElementById("stem3").innerHTML = temp[2].prompt;
-      document.getElementById("stem3Id").value = temp[2].id;
+    document.getElementById("stem3").innerHTML = temp[2].prompt;
+    document.getElementById("stem3Id").value = temp[2].id;
 
-      document.getElementById("stem4").innerHTML = temp[3].prompt;
-      document.getElementById("stem4Id").value = temp[3].id;
+    document.getElementById("stem4").innerHTML = temp[3].prompt;
+    document.getElementById("stem4Id").value = temp[3].id;
 
-      if(temp[4] != null){
-        document.getElementById("lastForm").style.display = "inline";
-        finisher_stem_array = [temp[0].prompt, temp[1].prompt, 
-          temp[2].prompt, temp[3].prompt, temp[4].prompt];
-        finisher_id_array = [temp[0].id, temp[1].id, 
-          temp[2].id, temp[3].id, temp[4].id];
-        document.getElementById("stem5").innerHTML = temp[4].prompt;
-        document.getElementById("stem5Id").value = temp[4].id;
+    if(temp[4] != null){
+      document.getElementById("lastForm").style.display = "inline";
+      finisher_stem_array = [temp[0].prompt, temp[1].prompt, 
+      temp[2].prompt, temp[3].prompt, temp[4].prompt];
+      finisher_id_array = [temp[0].id, temp[1].id, 
+      temp[2].id, temp[3].id, temp[4].id];
+      document.getElementById("stem5").innerHTML = temp[4].prompt;
+      document.getElementById("stem5Id").value = temp[4].id;
 
-      }else{
-        document.getElementById("lastForm").style.display = "none";
-        finisher_stem_array = [temp[0].prompt, temp[1].prompt, 
-          temp[2].prompt, temp[3].prompt];
-        finisher_id_array = [temp[0].id, temp[1].id, 
-          temp[2].id, temp[3].id];
-      }
+    }else{
+      document.getElementById("lastForm").style.display = "none";
+      finisher_stem_array = [temp[0].prompt, temp[1].prompt, 
+      temp[2].prompt, temp[3].prompt];
+      finisher_id_array = [temp[0].id, temp[1].id, 
+      temp[2].id, temp[3].id];
+    }
 
-      return temp;
-    } 
-  }
+    return temp;
+  } 
+}
 }
 
 
@@ -436,7 +388,7 @@ async function postFinisher(url = '', data = {}) {
     return finisher_stem_array[num];
   }
 
-   function getId(num){
+  function getId(num){
     return finisher_id_array[num];
   }
 
@@ -458,13 +410,20 @@ async function postFinisher(url = '', data = {}) {
     document.getElementById("stem4Id").value = result[3].Id;
 
     if(result[4] != null){
-        document.getElementById("lastForm").style.display = "inline";
-        document.getElementById("stem5").innerHTML = result[4].prompt;
-        document.getElementById("stem5Id").value = result[4].Id;
-      }
-      else  {
-        document.getElementById("lastForm").style.display = "none";
-      }
+      document.getElementById("lastForm").style.display = "inline";
+      document.getElementById("stem5").innerHTML = result[4].prompt;
+      document.getElementById("stem5Id").value = result[4].Id;
+    }
+    else  {
+      document.getElementById("lastForm").style.display = "none";
+    }
+  }
+  function setEOWDataObject(stem_id, user_id){
+    let dataObject = {
+      "stem_id": stem_id,
+      "user_id": user_id
+    }
+    return dataObject;
   }
 
 

@@ -9,7 +9,8 @@ AWS.config.update(configuration)
 
 const docClient = new AWS.DynamoDB.DocumentClient()
 
-/* GET */
+/******************  GET  **********************/
+
 
 export const fetchData = async(weekNum) => {
     /*var params = {
@@ -65,10 +66,35 @@ export const fetchData = async(weekNum) => {
         return result;
     }
 
-    /* PUT */
+    export const fetchFinishers = async(data) => {
+        try {
+            var params = {
+                TableName : "finishers",
+                IndexName : "stem_id_index",
+                KeyConditionExpression: "#stem_id = :stem_id",
+                ExpressionAttributeNames:{
+                    "#stem_id": "stem_id"
+                },
+                ExpressionAttributeValues: {
+                    ":stem_id": data.stem_id
+                }
+            };
+            var result = (await docClient.query(params).promise()).Items;
+            
+            console.log(result[0]);
+        } 
+        catch (error) {
+            console.error(error);
+        }
+        return result;
+    }
 
 
-    var dynamodb = new AWS.DynamoDB();
+
+/******************  PUT **********************/
+
+
+var dynamodb = new AWS.DynamoDB();
 
 
 // -----------------------------------------
@@ -94,6 +120,7 @@ export const postData = async(data) => {
           console.log(err);
           console.error("Can't add prompt.");
       } else {
+        alert("Success");
         console.log("Succeeded adding an item for this prompt: ", data.finisher);
     }
 });}
