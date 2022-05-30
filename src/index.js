@@ -152,6 +152,11 @@ render() {
     <a onClick={() => this.handleWeekButtonClick("4")} class="btn light-orange circular">Week 4</a>
     <a onClick={() => this.handleWeekButtonClick("5")} class="btn yellow-orange circular">Week 5</a>
     <a onClick={() => this.handleWeekButtonClick("6")} class="btn yellow circular">Week 6</a>
+    <a onClick={() => this.handleWeekButtonClick("7")} class="btn yellow-green circular">Week 7</a>
+    <a onClick={() => this.handleWeekButtonClick("8")} class="btn green circular">Week 8</a>
+    <a onClick={() => this.handleWeekButtonClick("9")} class="btn dark-green circular">Week 9</a>
+    <a onClick={() => this.handleWeekButtonClick("10")} class="btn teal circular">Week 10</a>
+    <a onClick={() => this.handleWeekButtonClick("11")} class="btn light-blue circular">Week 11</a>
     <br/>
     <br/>
     <br/>
