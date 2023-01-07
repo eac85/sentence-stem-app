@@ -1,11 +1,4 @@
 import * as AWS from 'aws-sdk'
-
-/*AWS.config.update({
-    region: 'YOUR_REGION',
-    secretAccessKey: 'YOUR_SECRET_ACCESS_KEY',
-    accessKeyId: 'YOUR_ACCESS_KEY_ID'
-})*/
-
 import { ConfigurationOptions } from 'aws-sdk'
 
 const configuration = ConfigurationOptions = {
@@ -23,35 +16,6 @@ const docClient = new AWS.DynamoDB.DocumentClient()
 
 
 export const fetchData = async(weekNum) => {
-    /*var params = {
-        Key: {
-             "Id": "1", 
-             "prompt": "If I bring more awareness to my life today…"
-            },
-        TableName: tableName
-    }
-    var result = await docClient.get(params).promise()
-    console.log(JSON.stringify(result))
-
-    docClient.scan(params, function (err, data) {
-        if (!err) {
-            console.log(data)
-        }
-    })*/
-    /*var params = {
-            TableName: tableName
-        };
-    var result = await docClient.scan(params).promise()
-    console.log(JSON.stringify(result))*/
-    /*var params = {
-            KeyConditionExpression: 'Id = :Id',
-            ExpressionAttributeValues: {
-                ':Id': '1'
-            },
-            TableName: tableName
-        };
-        var result = await docClient.query(params).promise()
-        console.log(JSON.stringify(result))*/
         try {
             var params = {
                 TableName : "six_pillars_prompts",
@@ -99,6 +63,29 @@ export const fetchData = async(weekNum) => {
         return result;
     }
 
+    export const getUser = async(username) => {
+        try {
+            var params = {
+                TableName : "user",
+                IndexName : "username_index",
+                KeyConditionExpression: "#username = :username",
+                ExpressionAttributeNames:{
+                    "#username": "username"
+                },
+                ExpressionAttributeValues: {
+                    ":username": username
+                }
+            };
+            var result = (await docClient.query(params).promise()).Items;
+            
+            console.log(result[0]);
+        } 
+        catch (error) {
+            console.error(error);
+        }
+        return result;
+    }
+
 
 
 /******************  PUT **********************/
@@ -130,8 +117,34 @@ export const postData = async(data) => {
           console.log(err);
           console.error("Can't add prompt.");
       } else {
-        alert("Success");
         console.log("Succeeded adding an item for this prompt: ", data.finisher);
+    }
+});}
+
+export const postUser = async(data) => {
+    var documentClient = new AWS.DynamoDB.DocumentClient();
+    console.log("Loading user data into DynamoDB");
+    var random_id = Math.random() + Date.now();
+    var params = 
+    {
+        "TableName": "user",
+        "Item": {
+            "user_id": {"N": random_id.toString()},
+            "username": {"S": data.username},
+            "first_name":{"S": data.first_name},
+            "last_name":{"S": data.last_name},
+            "email":{"S": data.email},
+            "hash":{"S": data.hash}
+        }
+    }
+
+
+    dynamodb.putItem(params, function(err, data) {
+        if (err) {
+          console.log(err);
+          console.error("Can't add user.");
+      } else {
+        console.log("Succeeded adding an item for this user: ", data.finisher);
     }
 });}
 

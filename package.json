@@ -26,6 +26,7 @@
     "react-dom": "^17.0.1",
     "react-modal": "^3.16.1",
     "react-scripts": "^5.0.1",
+    "sha3": "^2.1.4",
     "util": "^0.12.5",
     "web-vitals": "^0.2.4",
     "yarn": "^1.22.18"

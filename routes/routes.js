@@ -41,11 +41,17 @@ const router = app => {
     });
 
 
-    // Add a new user
     app.post('/finishers', (request, response) => {
         pool.query('INSERT INTO finishers SET ?', request.body, (error, result) => {
             if (error) throw error;
             response.status(201).send(`Finishers added with ID: ${result.insertId}`);
+        });
+    });
+
+    app.post('/user', (request, response) => {
+        pool.query('INSERT INTO user SET ?', request.body, (error, result) => {
+            if (error) throw error;
+            response.status(201).send(`User added with ID: ${result.insertId}`);
         });
     });
 
