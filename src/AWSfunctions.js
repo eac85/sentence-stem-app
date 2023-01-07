@@ -1,13 +1,16 @@
 import * as AWS from 'aws-sdk'
+/*import { ConfigurationOptions } from 'aws-sdk'
+
 const configuration: ConfigurationOptions = {
     region: 'us-east-1',
     secretAccessKey: 'XlMEunjR09kqA7HKLSj4sz9AmvVBRIgfZ/HFOuba',
     accessKeyId: 'AKIAXUNT5ERQBEGIBJTI'
 }
 
-AWS.config.update(configuration)
+AWS.config.update(configuration)*/
 
 const docClient = new AWS.DynamoDB.DocumentClient()
+
 
 /******************  GET  **********************/
 

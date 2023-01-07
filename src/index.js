@@ -5,7 +5,20 @@ import './button.css';
 import {fetchData, postData, fetchFinishers} from './AWSfunctions';
 import * as AWS from 'aws-sdk'
 import {ConfigurationOptions} from 'aws-sdk'
+import chroma from 'chroma-js';
+import Modal from 'react-modal';
 
+/*configuration: ConfigurationOptions = {
+    region: 'YOUR_REGION',
+    secretAccessKey: 'YOUR_SECRET_ACCESS_KEY',
+    accessKeyId: 'YOUR_ACCESS_KEY_ID'
+}*/
+
+AWS.config.update({
+    region: 'YOUR_REGION',
+    secretAccessKey: 'YOUR_SECRET_ACCESS_KEY',
+    accessKeyId: 'YOUR_ACCESS_KEY_ID'
+})
 
 
 class WeekButtons extends React.Component {
@@ -73,23 +86,23 @@ async handleEndOfWeek(){
  dataObject = setEOWDataObject(document.getElementById("stem1Id").value, 0);
  result = await fetchFinishers(dataObject);
  if (result != null){
- document.getElementById("finishers1Header").innerHTML = document.getElementById("stem1").innerHTML  + ': ';
- document.getElementById("finishers1").innerHTML = result[0].finisher;
- for (i = 1; i < result.length; i++) {
-  document.getElementById("finishers1").innerHTML += ', ' + result[i].finisher;
-  console.log(result[i].finisher);
-}
+   document.getElementById("finishers1Header").innerHTML = document.getElementById("stem1").innerHTML  + ': ';
+   document.getElementById("finishers1").innerHTML = result[0].finisher;
+   for (i = 1; i < result.length; i++) {
+    document.getElementById("finishers1").innerHTML += ', ' + result[i].finisher;
+    console.log(result[i].finisher);
+  }
 }
 
 dataObject = setEOWDataObject(document.getElementById("stem2Id").value, 0);
 result = await fetchFinishers(dataObject);
 if (result != null){
-document.getElementById("finishers2Header").innerHTML = document.getElementById("stem2").innerHTML  + ': ';
-document.getElementById("finishers2").innerHTML = result[0].finisher;
-for (i = 1; i < result.length; i++) {
-  document.getElementById("finishers2").innerHTML += ', ' + result[i].finisher;
-  console.log(result[i].finisher);
-}
+  document.getElementById("finishers2Header").innerHTML = document.getElementById("stem2").innerHTML  + ': ';
+  document.getElementById("finishers2").innerHTML = result[0].finisher;
+  for (i = 1; i < result.length; i++) {
+    document.getElementById("finishers2").innerHTML += ', ' + result[i].finisher;
+    console.log(result[i].finisher);
+  }
 }
 result = null;
 dataObject = setEOWDataObject(document.getElementById("stem3Id").value, 0);
@@ -139,24 +152,40 @@ render() {
   let stem5 = this.state.stemString5;
 
 
+  const hexColors = [
+  '#d55050',    '#FBDEDB',    '#e96633',    '#EC8423',    '#FCBB2B',    '#FFFF00',    '#B4C150',    '#5bbd72',    '#35750F',    '#50d5a1',    '#C3D7F8',    '#7abedf',    '#6698cb',    '#2F5594',    '#564f8a',    '#cb99c5',    '#612C65',    '#000000',    '#000000',    '#d2d2d2',    '#877876',    '#684D2A',    '#DEB887',    '#F5EFF0'];
+  const colorScale = chroma.scale(hexColors).mode('hsl').domain([1, 30]);
+
+
   return ( 
     <div>
+    <div id="loginModal"> </div>
     <h1> Sentence Stem Completion</h1>
     <h4> inspired by <a href='http://nathanielbranden.com/sentence-completion-i'> Nathaniel Branden </a> </h4>
 
-    
 
-    <a onClick={() => this.handleWeekButtonClick("1")} class="btn red circular">Week 1</a>
-    <a onClick={() => this.handleWeekButtonClick("2")} class="btn circular">Week 2</a>
-    <a onClick={() => this.handleWeekButtonClick("3")} class="btn orange circular">Week 3</a>
-    <a onClick={() => this.handleWeekButtonClick("4")} class="btn light-orange circular">Week 4</a>
-    <a onClick={() => this.handleWeekButtonClick("5")} class="btn yellow-orange circular">Week 5</a>
-    <a onClick={() => this.handleWeekButtonClick("6")} class="btn yellow circular">Week 6</a>
-    <a onClick={() => this.handleWeekButtonClick("7")} class="btn yellow-green circular">Week 7</a>
-    <a onClick={() => this.handleWeekButtonClick("8")} class="btn green circular">Week 8</a>
-    <a onClick={() => this.handleWeekButtonClick("9")} class="btn dark-green circular">Week 9</a>
-    <a onClick={() => this.handleWeekButtonClick("10")} class="btn teal circular">Week 10</a>
-    <a onClick={() => this.handleWeekButtonClick("11")} class="btn light-blue circular">Week 11</a>
+    <div style={{position: "relative", width: "250px"}}>
+    <div style={{position: "absolute", top: 0, right: 0, width: "100px", textAlign:"right"}}>
+
+    </div>
+    <div style={{position: "absolute", bottom: 0, right: 0, width: "100px", textAlign: "right"}}>
+    </div>
+
+    </div>
+
+    {Array.from(Array(30)).map((_, idx) => {
+      let week = idx + 1;
+      console.log((1/30)*idx);
+      return(
+      <a 
+      onClick={() => this.handleWeekButtonClick(String(week))} 
+      className="btn circular"
+      style={{backgroundColor: colorScale(week)}}
+      >Week {week}</a>
+      );
+    })}
+
+
     <br/>
     <br/>
     <br/>
@@ -305,9 +334,77 @@ render() {
   }
 }
 
+const customStyles = {
+  content: {
+    display: 'block',
+    width: '70%',
+    height: '50%',
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
+
+// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
+//Modal.setAppElement('#appElement');
+
+function App() {
+  let subtitle;
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+   
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  return (
+    <div>
+    <button onClick={openModal}
+    style={{ position: "absolute",
+    top: 0,
+    right: 0
+  }}>
+  Login</button>
+  <Modal
+  isOpen={modalIsOpen}
+  onAfterOpen={afterOpenModal}
+  onRequestClose={closeModal}
+  style={customStyles}
+  contentLabel="Example Modal"
+  >
+  <h1 ref={(_subtitle) => (subtitle = _subtitle)}>LOGIN</h1>
+  <button onClick={closeModal} style={{ position: "absolute",
+  top: 0,
+  right: 0
+}}>X</button>
+<form>
+<input />
+<input />
+<a onClick={() => this.login()} class="btn dark-green circular" style={{display: "block"}}>Login</a>
+<a onClick={() => this.login()} class="btn dark-blue circular" style={{display: "block"}}>Sign Up</a>
+
+</form>
+</Modal>
+</div>
+);
+}
+
 //=================
 
 ReactDOM.render(<WeekButtons />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("loginModal"));
+
 
 let finisher_stem_array = [];
 let finisher_id_array = [];
