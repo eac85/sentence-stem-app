@@ -14,11 +14,6 @@ import Modal from 'react-modal';
     accessKeyId: 'YOUR_ACCESS_KEY_ID'
 }*/
 
-AWS.config.update({
-    region: 'YOUR_REGION',
-    secretAccessKey: 'YOUR_SECRET_ACCESS_KEY',
-    accessKeyId: 'YOUR_ACCESS_KEY_ID'
-})
 
 
 class WeekButtons extends React.Component {
